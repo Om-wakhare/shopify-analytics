@@ -1,0 +1,34 @@
+# ============================================================
+#  Shopify Analytics Platform — Backend Dependencies
+#  Python 3.11+
+# ============================================================
+
+# ── Web framework ────────────────────────────────────────────
+fastapi==0.115.5
+uvicorn[standard]==0.32.1          # standard pulls in websockets + httptools
+
+# ── Database ─────────────────────────────────────────────────
+sqlalchemy==2.0.36
+asyncpg==0.30.0                    # async driver for FastAPI
+psycopg2-binary==2.9.10            # sync driver for Alembic + Celery tasks
+alembic==1.14.0
+
+# ── HTTP client ───────────────────────────────────────────────
+httpx==0.28.1                      # Shopify REST + GraphQL API calls
+
+# ── Validation & settings ─────────────────────────────────────
+pydantic==2.10.3
+pydantic-settings==2.6.1           # .env file loading via BaseSettings
+email-validator==2.2.0             # validates EmailStr fields
+
+# ── Task queue ────────────────────────────────────────────────
+celery[redis]==5.4.0
+redis==5.2.1                       # async Redis client (FX cache + Celery)
+flower==2.0.1                      # Celery monitoring UI  →  :5555
+
+# ── Auth / JWT ───────────────────────────────────────────────
+python-jose[cryptography]==3.3.0   # JWT signing + verification
+passlib[bcrypt]==1.7.4             # password hashing (for future email/pass login)
+
+# ── Environment ───────────────────────────────────────────────
+python-dotenv==1.0.1

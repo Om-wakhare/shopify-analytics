@@ -1,0 +1,50 @@
+# ── Secrets — NEVER commit these ─────────────────────────────
+backend/.env
+*.env
+.env.local
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+celerybeat-schedule
+celerybeat.pid
+
+# ── Node / Frontend ───────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# ── Database ──────────────────────────────────────────────────
+*.sqlite3
+*.db
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.iml
+
+# ── Claude ────────────────────────────────────────────────────
+.claude/
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/

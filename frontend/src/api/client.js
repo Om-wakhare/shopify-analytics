@@ -1,0 +1,89 @@
+import * as mock from './mockData.js'
+
+// Set to false to hit the real FastAPI backend
+const USE_MOCK = false
+const BASE_URL = '/api'
+
+function getToken() {
+  return localStorage.getItem('shopify_analytics_token')
+}
+
+async function apiFetch(path) {
+  const token = getToken()
+  const headers = {}
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(`${BASE_URL}${path}`, { headers })
+  if (res.status === 401) {
+    // Token expired — redirect to login
+    localStorage.removeItem('shopify_analytics_token')
+    window.location.href = '/login'
+    throw new Error('Unauthorized')
+  }
+  if (!res.ok) throw new Error(`API error ${res.status}: ${path}`)
+  return res.json()
+}
+
+function delay(ms = 400) {
+  return new Promise((r) => setTimeout(r, ms))
+}
+
+// ── KPI API ─────────────────────────────────────────────────────────────────
+
+export async function fetchSummary(shop) {
+  if (USE_MOCK) { await delay(); return mock.mockSummary }
+  return apiFetch(`/kpi/${shop}/summary`)
+}
+
+export async function fetchMonthlyRevenue(shop, months = 12) {
+  if (USE_MOCK) { await delay(); return mock.mockMonthlyRevenue.slice(-months) }
+  return apiFetch(`/kpi/${shop}/revenue?months=${months}`)
+}
+
+export async function fetchAOVTrend(shop, period = 'month') {
+  if (USE_MOCK) { await delay(); return mock.mockAOVTrend }
+  return apiFetch(`/kpi/${shop}/aov?period=${period}`)
+}
+
+export async function fetchRepeatRate(shop, months = 12) {
+  if (USE_MOCK) { await delay(); return mock.mockRepeatRate.slice(-months) }
+  return apiFetch(`/kpi/${shop}/repeat-rate?months=${months}`)
+}
+
+export async function fetchAvgCLTV(shop) {
+  if (USE_MOCK) { await delay(); return mock.mockAvgCLTV }
+  return apiFetch(`/kpi/${shop}/cltv/avg`)
+}
+
+export async function fetchTopCustomers(shop, limit = 20) {
+  if (USE_MOCK) { await delay(); return mock.mockTopCustomers.slice(0, limit) }
+  return apiFetch(`/kpi/${shop}/cltv?limit=${limit}`)
+}
+
+export async function fetchCohortRetention(shop, maxOffset = 11) {
+  if (USE_MOCK) { await delay(); return mock.mockCohortRetention }
+  return apiFetch(`/kpi/${shop}/cohorts?max_offset=${maxOffset}`)
+}
+
+export async function fetchChurnSummary(shop) {
+  if (USE_MOCK) { await delay(); return mock.mockChurnSummary }
+  return apiFetch(`/kpi/${shop}/churn/summary`)
+}
+
+export async function fetchChurnSignals(shop, tier = '') {
+  if (USE_MOCK) {
+    await delay()
+    return tier ? mock.mockChurnSignals.filter(c => c.churn_risk_tier === tier) : mock.mockChurnSignals
+  }
+  return apiFetch(`/kpi/${shop}/churn${tier ? `?risk_tier=${tier}` : ''}`)
+}
+
+export async function fetchTBODistribution(shop) {
+  if (USE_MOCK) { await delay(); return mock.mockTBODistribution }
+  return apiFetch(`/kpi/${shop}/tbo`)
+}
+
+export async function fetchProducts(shop, limit = 10) {
+  if (USE_MOCK) { await delay(); return mock.mockProducts.slice(0, limit) }
+  return apiFetch(`/kpi/${shop}/products?limit=${limit}`)
+}

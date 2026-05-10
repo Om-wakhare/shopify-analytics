@@ -1,0 +1,3 @@
+web: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+worker-webhooks: celery -A app.workers.celery_app.celery_app worker --queues=webhooks --concurrency=2 --loglevel=info
+worker-bulk: celery -A app.workers.celery_app.celery_app worker --queues=bulk --concurrency=1 --loglevel=info

@@ -1,0 +1,34 @@
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Database
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+psycopg2-binary==2.9.10        # for sync usage (migrations, Celery)
+alembic==1.14.0
+
+# HTTP client
+httpx==0.28.1
+
+# Validation / Settings
+pydantic==2.10.3
+pydantic-settings==2.6.1
+email-validator==2.2.0
+
+# Task queue
+celery[redis]==5.4.0
+redis==5.2.1
+flower==2.0.1                  # Celery monitoring UI
+
+# Crypto
+# (hashlib / hmac are stdlib — no extra package needed)
+
+# Utilities
+python-dotenv==1.0.1
+
+# Dev / testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1                  # also used in tests
+factory-boy==3.3.1
