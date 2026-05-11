@@ -33,8 +33,8 @@ export default function LoginPage() {
     }
 
     setLoading(true)
-    // Redirect to backend OAuth initiation
-    window.location.href = `http://localhost:8000/connect-shopify?shop=${encodeURIComponent(domain)}`
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    window.location.href = `${backendUrl}/connect-shopify?shop=${encodeURIComponent(domain)}`
   }
 
   return (
