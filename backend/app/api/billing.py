@@ -27,7 +27,7 @@ settings = get_settings()
 
 router = APIRouter(prefix="/billing", tags=["billing"])
 
-FRONTEND_URL = settings.APP_BASE_URL.replace(":8000", ":3000") if ":8000" in settings.APP_BASE_URL else "http://localhost:3000"
+FRONTEND_URL = "https://shopify-analytics-igsp.vercel.app"
 
 PLANS = {
     "starter": {

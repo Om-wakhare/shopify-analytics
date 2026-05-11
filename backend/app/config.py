@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     BULK_POLL_INTERVAL: int = 10   # seconds between status polls
     BULK_MAX_WAIT: int = 3600      # max seconds to wait for a bulk job
 
+    # ── Frontend ──────────────────────────────────────────────────────────
+    FRONTEND_URL: str = "https://shopify-analytics-igsp.vercel.app"
+
     # ── Currency ──────────────────────────────────────────────────────────
     DEFAULT_CURRENCY: str = "USD"
 

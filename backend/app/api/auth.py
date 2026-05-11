@@ -35,7 +35,7 @@ router = APIRouter(tags=["auth"])
 _state_store: dict[str, str] = {}  # state_token → shop_domain
 
 TRIAL_DAYS = 14
-FRONTEND_URL = settings.APP_BASE_URL.replace(":8000", ":3000") if ":8000" in settings.APP_BASE_URL else "http://localhost:3000"
+FRONTEND_URL = "https://shopify-analytics-igsp.vercel.app"
 
 
 # ---------------------------------------------------------------------------
