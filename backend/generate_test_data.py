@@ -17,8 +17,9 @@ from datetime import datetime, timedelta, timezone
 import httpx
 
 # ── Config ────────────────────────────────────────────────────────────────────
-SHOP  = "website-solution-ztmwqzyt.myshopify.com"
-TOKEN = "SHOPIFY_TOKEN_REMOVED"
+import os
+SHOP  = os.environ.get("SHOP_DOMAIN", "your-store.myshopify.com")
+TOKEN = os.environ.get("SHOPIFY_ACCESS_TOKEN", "")
 BASE  = f"https://{SHOP}/admin/api/2026-04"
 HEADS = {"X-Shopify-Access-Token": TOKEN, "Content-Type": "application/json"}
 
