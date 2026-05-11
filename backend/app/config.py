@@ -15,9 +15,20 @@ class Settings(BaseSettings):
     SECRET_KEY: str  # used for session signing
 
     # ── Database ─────────────────────────────────────────────────────────
-    DATABASE_URL: str  # postgresql+asyncpg://user:pass@host/db
+    # Railway injects DATABASE_URL as postgresql:// — we convert to asyncpg
+    DATABASE_URL: str = "postgresql+asyncpg://localhost/railway"
     DATABASE_POOL_SIZE: int = 10
     DATABASE_MAX_OVERFLOW: int = 20
+
+    @property
+    def async_database_url(self) -> str:
+        """Always return asyncpg-compatible URL regardless of what Railway injects."""
+        url = self.DATABASE_URL
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        return url
 
     # ── Shopify OAuth ─────────────────────────────────────────────────────
     SHOPIFY_API_KEY: str

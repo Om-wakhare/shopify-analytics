@@ -33,6 +33,8 @@ def _sync_url(async_url: str) -> str:
 
 def _get_url() -> str:
     raw = os.environ.get("DATABASE_URL", "")
+    # Normalise postgres:// → postgresql:// before converting driver
+    raw = raw.replace("postgres://", "postgresql://", 1)
     return _sync_url(raw)
 
 
