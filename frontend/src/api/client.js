@@ -2,7 +2,7 @@ import * as mock from './mockData.js'
 
 // Set to false to hit the real FastAPI backend
 const USE_MOCK = false
-const BASE_URL = '/api'
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 function getToken() {
   return localStorage.getItem('shopify_analytics_token')
