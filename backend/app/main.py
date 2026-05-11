@@ -22,6 +22,18 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting %s", settings.APP_NAME)
+    # Run migrations on startup
+    try:
+        import subprocess, sys
+        result = subprocess.run(
+            [sys.executable, "-m", "alembic", "upgrade", "head"],
+            capture_output=True, text=True
+        )
+        logger.info("Alembic stdout: %s", result.stdout)
+        if result.returncode != 0:
+            logger.error("Alembic stderr: %s", result.stderr)
+    except Exception as e:
+        logger.error("Migration error: %s", e)
     yield
     logger.info("Shutting down")
 
