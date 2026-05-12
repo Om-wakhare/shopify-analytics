@@ -223,7 +223,7 @@ async def _run_bulk_sync_async(
     from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
     settings = get_settings()
-    engine = create_async_engine(settings.DATABASE_URL, pool_pre_ping=True)
+    engine = create_async_engine(settings.async_database_url, pool_pre_ping=True)
     SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
     try:
