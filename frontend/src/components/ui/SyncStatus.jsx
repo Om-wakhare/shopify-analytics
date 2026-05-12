@@ -17,7 +17,8 @@ export default function SyncStatus() {
     setSyncing(true)
     setSyncError(false)
     try {
-      const res = await fetch('/api/sync/bulk', {
+      const backendUrl = import.meta.env.VITE_API_URL || ''
+      const res = await fetch(`${backendUrl}/sync/bulk`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ shop_domain: store.domain, entity: 'all' }),
