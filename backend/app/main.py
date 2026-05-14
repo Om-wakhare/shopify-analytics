@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, billing, kpi, sync, webhooks
+from app.api import auth, billing, kpi, search, sync, webhooks
 from app.config import get_settings
 from app.models.schemas import HealthResponse
 
@@ -55,6 +55,7 @@ app.add_middleware(
 # ── Routers ───────────────────────────────────────────────────────────────
 app.include_router(auth.router)
 app.include_router(billing.router)
+app.include_router(search.router)
 app.include_router(webhooks.router)
 app.include_router(sync.router)
 app.include_router(kpi.router)

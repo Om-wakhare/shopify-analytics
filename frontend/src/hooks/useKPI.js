@@ -15,3 +15,4 @@ export const useChurnSummary   = () => { const { store } = useStore(); return us
 export const useChurnSignals   = (tier) => { const { store } = useStore(); return useQuery({ queryKey: ['churnSignals', store.domain, tier],       queryFn: () => api.fetchChurnSignals(store.domain, tier),        ...opts }) }
 export const useTBODistribution= () => { const { store } = useStore(); return useQuery({ queryKey: ['tbo', store.domain],              queryFn: () => api.fetchTBODistribution(store.domain),           ...opts }) }
 export const useProducts       = (limit) => { const { store } = useStore(); return useQuery({ queryKey: ['products', store.domain, limit],          queryFn: () => api.fetchProducts(store.domain, limit),           ...opts }) }
+export const useShopInfo       = () => useQuery({ queryKey: ['shopInfo'], queryFn: () => api.fetchShopInfo(), staleTime: 10 * 60 * 1000, retry: 1 })

@@ -258,6 +258,52 @@ class ShopifyClient:
 
     # ── Context manager ──────────────────────────────────────────────────
 
+    # ── Shop info ────────────────────────────────────────────────────────
+
+    async def get_shop_info(self) -> dict:
+        """Fetch shop metadata from Shopify Admin GraphQL API."""
+        query = """
+        {
+          shop {
+            name
+            email
+            myshopifyDomain
+            currencyCode
+            ianaTimezone
+            plan {
+              displayName
+            }
+            primaryDomain {
+              url
+            }
+            contactEmail
+            billingAddress {
+              firstName
+              lastName
+              company
+              countryCodeV2
+            }
+          }
+        }
+        """
+        data = await self.graphql(query)
+        shop = data.get("shop", {})
+        billing = shop.get("billingAddress", {}) or {}
+        owner_name = " ".join(filter(None, [
+            billing.get("firstName", ""),
+            billing.get("lastName", ""),
+        ])).strip() or billing.get("company", "")
+
+        return {
+            "shop_name":        shop.get("name"),
+            "shop_owner_email": shop.get("contactEmail") or shop.get("email"),
+            "shop_owner_name":  owner_name or None,
+            "shop_plan":        (shop.get("plan") or {}).get("displayName"),
+            "currency":         shop.get("currencyCode", "USD"),
+            "timezone":         shop.get("ianaTimezone"),
+            "primary_domain":   (shop.get("primaryDomain") or {}).get("url"),
+        }
+
     async def __aenter__(self):
         return self
 

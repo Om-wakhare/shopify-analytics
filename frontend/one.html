@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Java Programmer Assessment</title>
+  </head>
+  <body>
+ 
+    <h1>Welcome to the Assessment</h1>
+    <div id="exam-questions">
+      <!-- questions, timer, submit button etc -->
+    </div>
+ 
+    <!-- AlphaProctor SDK — config MUST come before the script tag -->
+    <script>
+      window.AlphaAEyeConfig = {
+        tenant: "tk_3dd12a03e29c4e0b10da4180051f5a36b328",
+        assessment: "d786a214-9241-4bfc-bd2f-946125e6639c",
+        candidate: {
+          id: "C-001",
+          name: "Om Wakhare",
+          email: "omwakhare16@gmail.com"
+        },
+        metadata: { attemptId: "test-001" }
+      };
+    </script>
+    <script src="https://proctor.alpharecrewt.ai/sdk.js"></script>
+ 
+  </body>
+</html>

@@ -87,3 +87,31 @@ export async function fetchProducts(shop, limit = 10) {
   if (USE_MOCK) { await delay(); return mock.mockProducts.slice(0, limit) }
   return apiFetch(`/kpi/${shop}/products?limit=${limit}`)
 }
+
+export async function fetchShopInfo() {
+  if (USE_MOCK) {
+    await delay()
+    return {
+      shop_name: 'Glow Co Store', shop_owner_email: 'owner@glowco.com',
+      shop_owner_name: 'Alex Johnson', shop_plan: 'Basic', currency: 'USD',
+      timezone: 'America/New_York', primary_domain: 'https://glowco.com',
+      subscription_status: 'trial', subscription_plan: null,
+      trial_ends_at: new Date(Date.now() + 10 * 86400000).toISOString(),
+      customers_synced: 87, orders_synced: 174, last_sync_at: new Date().toISOString(),
+    }
+  }
+  return apiFetch('/shop/info')
+}
+
+export async function fetchSearch(query) {
+  if (!query || !query.trim()) return { customers: [], products: [], orders: [] }
+  if (USE_MOCK) {
+    await delay(200)
+    return {
+      customers: [{ id: '1', email: `${query}@example.com`, total_spent: 249.99, orders_count: 3, type: 'customer' }],
+      products:  [{ id: '100', title: `${query} Serum`, vendor: 'Glow Co', type: 'product' }],
+      orders:    [],
+    }
+  }
+  return apiFetch(`/search?q=${encodeURIComponent(query)}`)
+}

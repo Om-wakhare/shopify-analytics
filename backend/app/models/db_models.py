@@ -42,6 +42,11 @@ class ShopifyStore(Base):
     shopify_plan: Mapped[Optional[str]] = mapped_column(Text)
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
     timezone: Mapped[Optional[str]] = mapped_column(Text)
+    shop_name: Mapped[Optional[str]] = mapped_column(Text)
+    shop_owner_email: Mapped[Optional[str]] = mapped_column(Text)
+    shop_owner_name: Mapped[Optional[str]] = mapped_column(Text)
+    shop_plan: Mapped[Optional[str]] = mapped_column(Text)
+    primary_domain: Mapped[Optional[str]] = mapped_column(Text)
     installed_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=text("NOW()")
     )

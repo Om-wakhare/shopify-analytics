@@ -94,10 +94,26 @@ async def auth_callback(
     # 4. Upsert store
     store = await _upsert_store(db, shop, access_token, scopes)
 
-    # 5. Upsert platform user (create on first install, update on reinstall)
+    # 5. Fetch shop metadata from Shopify and update store record
+    try:
+        from app.services.shopify_client import ShopifyClient
+        async with ShopifyClient(shop, access_token) as client:
+            shop_info = await client.get_shop_info()
+        store.shop_name        = shop_info.get("shop_name")
+        store.shop_owner_email = shop_info.get("shop_owner_email")
+        store.shop_owner_name  = shop_info.get("shop_owner_name")
+        store.shop_plan        = shop_info.get("shop_plan")
+        store.primary_domain   = shop_info.get("primary_domain")
+        store.currency         = shop_info.get("currency", "USD")
+        store.timezone         = shop_info.get("timezone")
+        await db.flush()
+    except Exception as e:
+        logger.warning("Could not fetch shop metadata: %s", e)
+
+    # 6. Upsert platform user (create on first install, update on reinstall)
     user = await _upsert_platform_user(db, store)
 
-    # 6. Register webhooks + kick off bulk sync
+    # 7. Register webhooks + kick off bulk sync
     from app.workers.tasks import register_webhooks_task, trigger_initial_sync_task
     register_webhooks_task.delay(str(store.id))
     trigger_initial_sync_task.delay(str(store.id))
@@ -144,6 +160,63 @@ async def get_me(
         "subscription_plan":   user.subscription_plan,
         "trial_ends_at":       user.trial_ends_at,
         "subscribed_at":       user.subscribed_at,
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /shop/info — return full shop + user profile
+# ---------------------------------------------------------------------------
+@router.get("/shop/info")
+async def get_shop_info(
+    current: TokenPayload = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    store_result = await db.execute(
+        select(ShopifyStore).where(ShopifyStore.shop_domain == current.shop_domain)
+    )
+    store = store_result.scalar_one_or_none()
+    if not store:
+        raise HTTPException(status_code=404, detail="Store not found")
+
+    user_result = await db.execute(
+        select(PlatformUser).where(PlatformUser.store_id == store.id)
+    )
+    user = user_result.scalar_one_or_none()
+
+    # Count synced records
+    from sqlalchemy import func
+    from app.models.db_models import Customer, Order, SyncLog
+    cust_count = await db.scalar(
+        select(func.count()).where(Customer.store_id == store.id)
+    )
+    order_count = await db.scalar(
+        select(func.count()).where(Order.store_id == store.id)
+    )
+    last_sync = await db.scalar(
+        select(SyncLog.completed_at)
+        .where(SyncLog.store_id == store.id, SyncLog.status == "completed")
+        .order_by(SyncLog.completed_at.desc())
+        .limit(1)
+    )
+
+    return {
+        "store_id":            str(store.id),
+        "shop_domain":         store.shop_domain,
+        "shop_name":           store.shop_name,
+        "shop_owner_email":    store.shop_owner_email,
+        "shop_owner_name":     store.shop_owner_name,
+        "shop_plan":           store.shop_plan,
+        "currency":            store.currency,
+        "timezone":            store.timezone,
+        "primary_domain":      store.primary_domain,
+        "installed_at":        store.installed_at,
+        "subscription_status": user.subscription_status if user else "trial",
+        "subscription_plan":   user.subscription_plan if user else None,
+        "trial_ends_at":       user.trial_ends_at if user else None,
+        "subscribed_at":       user.subscribed_at if user else None,
+        "customers_synced":    cust_count or 0,
+        "orders_synced":       order_count or 0,
+        "last_sync_at":        last_sync,
     }
 
 
